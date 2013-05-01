@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ItemProActivity!</string>
+    <string name="app_name">ItemPro</string>
+    <string name="login_title">Login Screen</string>
+    <string name="itemlist">Contacts</string>
+    <string name="about">About</string>
+    <string name="back">Back</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+
+</resources>
