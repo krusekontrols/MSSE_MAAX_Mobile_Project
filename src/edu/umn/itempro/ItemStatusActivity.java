@@ -11,3 +11,4 @@ import android.widget.EditText;
 public class ItemStatusActivity extends Activity {
 
 }
+
