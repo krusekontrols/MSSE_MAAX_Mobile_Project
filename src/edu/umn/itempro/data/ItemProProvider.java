@@ -18,19 +18,20 @@ public class ItemProProvider extends ContentProvider {
 	
 	public static final int CONTACT = 100;
 	public static final int CONTACT_ID = 110;
-	private static final String CONTACT_BASE_PATH = "Contact";
+	
+	private static final String ITEMPRO_BASE_PATH = "ItemPro";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTACT_BASE_PATH);
+	        + "/" + ITEMPRO_BASE_PATH);
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/Contact";
+	        + "/ItemPro";
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-	        + "/Contact";
+	        + "/ItemPro";
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
     static {
-        sURIMatcher.addURI(AUTHORITY, CONTACT_BASE_PATH, CONTACT);
-        sURIMatcher.addURI(AUTHORITY, CONTACT_BASE_PATH + "/#", CONTACT_ID);
+        sURIMatcher.addURI(AUTHORITY, ITEMPRO_BASE_PATH, CONTACT);
+        sURIMatcher.addURI(AUTHORITY, ITEMPRO_BASE_PATH + "/#", CONTACT_ID);
     }
 
 	@Override
@@ -50,11 +51,11 @@ public class ItemProProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection,
 	        String[] selectionArgs, String sortOrder) {
 	    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-	    queryBuilder.setTables(ItemProDatabase.TABLE_CONTACT);
+	    queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
 	    case CONTACT_ID:
-	        queryBuilder.appendWhere(ItemProDatabase.ID + "="
+	        queryBuilder.appendWhere(ItemProDatabase.COL_IID + "="
 	                + uri.getLastPathSegment());
 	        break;
 	    case CONTACT:
@@ -99,18 +100,18 @@ public class ItemProProvider extends ContentProvider {
         switch (uriType) {
         case CONTACT_ID:
             String id = uri.getLastPathSegment();
-            StringBuilder modSelection = new StringBuilder(ItemProDatabase.ID
+            StringBuilder modSelection = new StringBuilder(ItemProDatabase.TABLE_USER
                     + "=" + id);
 
             if (!TextUtils.isEmpty(selection)) {
                 modSelection.append(" AND " + selection);
             }
 
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_CONTACT,
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_USER,
                     values, modSelection.toString(), null);
             break;
         case CONTACT:
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_CONTACT,
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_USER,
                     values, selection, selectionArgs);
             break;
         default:
