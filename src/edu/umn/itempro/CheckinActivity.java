@@ -1,8 +1,7 @@
 package edu.umn.itempro;
 
 import android.app.Activity;
-import android.widget.Button;
-import android.widget.EditText;
+import android.os.Bundle;
 
 /** A Class for User to Checkin a store
 *
@@ -10,4 +9,14 @@ import android.widget.EditText;
 
 public class CheckinActivity extends Activity {
 
+	/** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.checkin);
+    }
+    
+    @Override
+    public void onBackPressed() {
+    }
 }

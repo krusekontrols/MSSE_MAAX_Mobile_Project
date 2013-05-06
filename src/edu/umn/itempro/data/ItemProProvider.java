@@ -12,35 +12,38 @@ import android.text.TextUtils;
 
 public class ItemProProvider extends ContentProvider {
 
-	private ItemProDatabase cDB;
+	private ItemProDatabase iDB;
 	
-	private static final String AUTHORITY = "edu.umn.contactviewer.data.ItemProProvider";
+	private static final String AUTHORITY = "edu.umn.itempro.data.ItemProProvider";
 	
-	public static final int CONTACT = 100;
-	public static final int CONTACT_ID = 110;
+	public static final int USER = 100;
+	public static final int ITEM = 110;
 	
-	private static final String ITEMPRO_BASE_PATH = "ItemPro";
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + ITEMPRO_BASE_PATH);
+	
+	//public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ITEMPRO_BASE_PATH);
+	public static final String CONTENT_USER_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+	        + "/" + ItemProDatabase.TABLE_USER ;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/ItemPro";
-	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-	        + "/ItemPro";
+	        + "/" + ItemProDatabase.TABLE_ITEM;
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
     static {
-        sURIMatcher.addURI(AUTHORITY, ITEMPRO_BASE_PATH, CONTACT);
-        sURIMatcher.addURI(AUTHORITY, ITEMPRO_BASE_PATH + "/#", CONTACT_ID);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_USER, USER);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_ITEM, ITEM);
+    }
+    
+    public static final Uri getContentURI(String tableName) {
+    	return Uri.parse("content://" + AUTHORITY + "/" + tableName);
     }
 
 	@Override
 	public String getType(Uri uri) {
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
-	    case CONTACT:
-	        return CONTENT_TYPE;
-	    case CONTACT_ID:
+	    case USER:
+	        return CONTENT_USER_TYPE;
+	    case ITEM:
 	        return CONTENT_ITEM_TYPE;
 	    default:
 	        return null;
@@ -51,20 +54,18 @@ public class ItemProProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection,
 	        String[] selectionArgs, String sortOrder) {
 	    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-	    queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
-	    case CONTACT_ID:
-	        queryBuilder.appendWhere(ItemProDatabase.COL_IID + "="
-	                + uri.getLastPathSegment());
+	    case USER:
+	    	queryBuilder.setTables(ItemProDatabase.TABLE_USER);
 	        break;
-	    case CONTACT:
-	        // no filter
+	    case ITEM:
+	    	 queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
 	        break;
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
-	    Cursor cursor = queryBuilder.query(cDB.getReadableDatabase(),
+	    Cursor cursor = queryBuilder.query(iDB.getReadableDatabase(),
 	            projection, selection, selectionArgs, null, null, sortOrder);
 	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
 	    return cursor;
@@ -85,7 +86,7 @@ public class ItemProProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		// TODO Auto-generated method stub
-		cDB = new ItemProDatabase(getContext());
+		iDB = new ItemProDatabase(getContext());
         return true;
 	}
 
@@ -93,12 +94,12 @@ public class ItemProProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = cDB.getWritableDatabase();
+        SQLiteDatabase sqlDB = iDB.getWritableDatabase();
 
         int rowsAffected;
 
         switch (uriType) {
-        case CONTACT_ID:
+        case USER:
             String id = uri.getLastPathSegment();
             StringBuilder modSelection = new StringBuilder(ItemProDatabase.TABLE_USER
                     + "=" + id);
@@ -110,7 +111,7 @@ public class ItemProProvider extends ContentProvider {
             rowsAffected = sqlDB.update(ItemProDatabase.TABLE_USER,
                     values, modSelection.toString(), null);
             break;
-        case CONTACT:
+        case ITEM:
             rowsAffected = sqlDB.update(ItemProDatabase.TABLE_USER,
                     values, selection, selectionArgs);
             break;

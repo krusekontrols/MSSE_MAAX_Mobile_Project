@@ -1,7 +1,7 @@
 package edu.umn.itempro;
 
-import edu.umn.itempro.*;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -12,9 +12,8 @@ public class ItemProActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        TextView textView = (TextView)findViewById(R.id.details_text);
-        String color = getIntent().getStringExtra("color");
-        textView.setText(color);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+    	startActivity(intent);
 
     }
 }

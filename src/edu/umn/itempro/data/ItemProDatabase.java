@@ -13,7 +13,7 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     private static final String DB_NAME = "itempro_data";
     
     public static final String TABLE_USER = "User";
-    public static final int COL_UID_KEY = 0; // "user_id";
+    public static final String COL_UID_KEY = "uid"; // "user_id";
     public static final String COL_UID = "user_id";
     public static final String COL_PWD = "password";
     
@@ -67,10 +67,10 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 		db.execSQL(CREATE_TABLE_USER);
-		db.execSQL(CREATE_TABLE_ITEM);
-		db.execSQL(CREATE_TABLE_STATUS);
-		db.execSQL(CREATE_TABLE_PROMOS);
-		db.execSQL(CREATE_TABLE_PROMO_DETAIL);
+		//db.execSQL(CREATE_TABLE_ITEM);
+		//db.execSQL(CREATE_TABLE_STATUS);
+		//db.execSQL(CREATE_TABLE_PROMOS);
+		//db.execSQL(CREATE_TABLE_PROMO_DETAIL);
 		
 		seedData(db);
 	}
@@ -79,7 +79,7 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		Log.w(DEBUG_TAG, "Upgrading database. Existing contents will be lost. ["
 	            + oldVersion + "]->[" + newVersion + "]");
-	    db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_USER);
+	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
 	    onCreate(db);
 		
 	}

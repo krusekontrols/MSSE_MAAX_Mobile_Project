@@ -5,9 +5,9 @@
     android:orientation="vertical" >
 
     
-     <TextView android:id="@+id/main_text"
+     <TextView android:id="@+id/checkin_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:text="@string/checkinGreeting" />
 
 </LinearLayout>
