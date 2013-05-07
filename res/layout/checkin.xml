@@ -9,5 +9,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/checkinGreeting" />
+        
+    <Button android:id="@+id/button1"
+    	android:layout_width="400px"
+        android:layout_height="wrap_content"
+		android:text="Best Buy" />
+
+    <Button android:id="@+id/button2"
+		android:layout_width="400px"
+        android:layout_height="wrap_content"
+		android:text="Target" />
+
 
 </LinearLayout>
