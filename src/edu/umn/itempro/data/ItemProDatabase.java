@@ -22,17 +22,17 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     public static final String COL_INAME = "item_name";
     
     public static final String TABLE_STATUS = "Status";
-    public static final String COL_SIID = "Sitem_id";
-    public static final String COL_TARGET = "1"; //"TargetStatus";
-    public static final String COL_BESYBUY ="1"; //"BestBuyStatus";
+    public static final String COL_SIID = "item_id";
+    public static final String COL_TARGET = "Target"; //"TargetStatus";
+    public static final String COL_BESYBUY ="BestBuy"; //"BestBuyStatus";
     
     public static final String TABLE_PROMOS = "Promotions";
-    public static final String COL_PIID = "Pitem_id";
-    public static final String COL_TARGETP = "1"; //"TargetPromos";
-    public static final String COL_BESYBUYP = "1"; //"BestBuyPromos";
+    public static final String COL_PIID = "item_id";
+    public static final String COL_TARGETP = "Target"; //"TargetPromos";
+    public static final String COL_BESYBUYP = "BestBuy"; //"BestBuyPromos";
     
     public static final String TABLE_PROMO_DETAIL = "PromotionDetails";
-    public static final String COL_PDIID = "PDitem_id";
+    public static final String COL_PDIID = "item_id";
     public static final String COL_IDETAIL = "ItemDetail";
     public static final String COL_ORIGPRICE = "OriginalPrice";
     public static final String COL_PROMOPRICE = "PromotionPrice";
@@ -68,7 +68,7 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 		
 		db.execSQL(CREATE_TABLE_USER);
 		db.execSQL(CREATE_TABLE_ITEM);
-	//	db.execSQL(CREATE_TABLE_STATUS);
+		db.execSQL(CREATE_TABLE_STATUS);
 		db.execSQL(CREATE_TABLE_PROMOS);
 		db.execSQL(CREATE_TABLE_PROMO_DETAIL);
 		
