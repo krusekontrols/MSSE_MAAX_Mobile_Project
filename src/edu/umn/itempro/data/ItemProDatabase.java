@@ -69,8 +69,8 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_USER);
 		db.execSQL(CREATE_TABLE_ITEM);
 	//	db.execSQL(CREATE_TABLE_STATUS);
-	//	db.execSQL(CREATE_TABLE_PROMOS);
-	//	db.execSQL(CREATE_TABLE_PROMO_DETAIL);
+		db.execSQL(CREATE_TABLE_PROMOS);
+		db.execSQL(CREATE_TABLE_PROMO_DETAIL);
 		
 		seedData(db);
 	}
