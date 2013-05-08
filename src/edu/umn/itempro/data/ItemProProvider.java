@@ -18,6 +18,9 @@ public class ItemProProvider extends ContentProvider {
 	
 	public static final int USER = 100;
 	public static final int ITEM = 110;
+	public static final int STATUS = 120;
+	public static final int PROMOS = 130;
+	public static final int PROMODETAIL = 140;
 	
 	
 	//public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ITEMPRO_BASE_PATH);
@@ -25,12 +28,22 @@ public class ItemProProvider extends ContentProvider {
 	        + "/" + ItemProDatabase.TABLE_USER ;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/" + ItemProDatabase.TABLE_ITEM;
+	public static final String CONTENT_STATUS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+	        + "/" + ItemProDatabase.TABLE_STATUS;
+	public static final String CONTENT_PROMOS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+	        + "/" + ItemProDatabase.TABLE_PROMOS;
+	public static final String CONTENT_PROMODETAIL_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+	        + "/" + ItemProDatabase.TABLE_PROMO_DETAIL;
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
     static {
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_USER, USER);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_ITEM, ITEM);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_STATUS, STATUS);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMOS, PROMOS);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMO_DETAIL, PROMODETAIL);
+        
     }
     
     public static final Uri getContentURI(String tableName) {
@@ -45,6 +58,13 @@ public class ItemProProvider extends ContentProvider {
 	        return CONTENT_USER_TYPE;
 	    case ITEM:
 	        return CONTENT_ITEM_TYPE;
+	        
+	    case STATUS:
+	        return CONTENT_STATUS_TYPE;
+	    case PROMOS:
+	        return CONTENT_PROMOS_TYPE;
+	    case PROMODETAIL:
+	        return CONTENT_PROMODETAIL_TYPE;
 	    default:
 	        return null;
 	    }
@@ -62,6 +82,15 @@ public class ItemProProvider extends ContentProvider {
 	    case ITEM:
 	    	 queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
 	        break;
+	    case STATUS:
+	    	 queryBuilder.setTables(ItemProDatabase.TABLE_STATUS);
+	        break;
+	    case PROMOS:
+	    	 queryBuilder.setTables(ItemProDatabase.TABLE_PROMOS);
+	        break;
+	    case PROMODETAIL:
+	    	 queryBuilder.setTables(ItemProDatabase.TABLE_PROMO_DETAIL);
+	        break;
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
@@ -77,11 +106,47 @@ public class ItemProProvider extends ContentProvider {
 		return 0;
 	}
 
+	
 	@Override
-	public Uri insert(Uri arg0, ContentValues arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Uri insert(Uri uri, ContentValues values) {
+		
+	        int uriType = sURIMatcher.match(uri);
+	        SQLiteDatabase sqlDB = iDB.getWritableDatabase();
+
+	        long rowsAffected;
+
+	        switch (uriType) {
+	        case USER:
+	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_USER , null, values);
+	            
+	            break;
+	        case ITEM:
+	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_ITEM , null, values);
+	        	
+		            break;
+	                 
+	        case STATUS:
+	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_STATUS , null, values);
+	            
+	        	break;
+	        case PROMOS:
+	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_PROMOS , null, values);
+	            
+	        	break;
+	        case PROMODETAIL:
+	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_PROMO_DETAIL , null, values);
+	            
+	        	break;
+	                     
+	        default:
+	            throw new IllegalArgumentException("Unknown URI");
+	        }
+	        
+	        getContext().getContentResolver().notifyChange(uri, null);
+	        return uri;
+	    }
+
+	
 
 	@Override
 	public boolean onCreate() {
@@ -112,9 +177,23 @@ public class ItemProProvider extends ContentProvider {
                     values, modSelection.toString(), null);
             break;
         case ITEM:
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_USER,
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_ITEM,
                     values, selection, selectionArgs);
             break;
+                 
+        case STATUS:
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_STATUS,
+                    values, selection, selectionArgs);
+            break;
+        case PROMOS:
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_PROMOS,
+                    values, selection, selectionArgs);
+            break;
+        case PROMODETAIL:
+            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_PROMO_DETAIL,
+                    values, selection, selectionArgs);
+            break;
+                     
         default:
             throw new IllegalArgumentException("Unknown URI");
         }

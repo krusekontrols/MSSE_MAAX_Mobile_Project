@@ -18,21 +18,21 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     public static final String COL_PWD = "password";
     
     public static final String TABLE_ITEM = "Item";
-    public static final int COL_IID = 0;
+    public static final String COL_IID = "iid";
     public static final String COL_INAME = "item_name";
     
     public static final String TABLE_STATUS = "Status";
-    //public static final String COL_SIID = "item_id";
-    public static final int COL_TARGET = 0; //"TargetStatus";
-    public static final int COL_BESYBUY = 0; //"BestBuyStatus";
+    public static final String COL_SIID = "Sitem_id";
+    public static final String COL_TARGET = "1"; //"TargetStatus";
+    public static final String COL_BESYBUY ="1"; //"BestBuyStatus";
     
     public static final String TABLE_PROMOS = "Promotions";
-    //public static final String COL_PIID = "item_id";
-    public static final int COL_TARGETP =  0; //"TargetPromos";
-    public static final int COL_BESYBUYP =  0; //"BestBuyPromos";
+    public static final String COL_PIID = "Pitem_id";
+    public static final String COL_TARGETP = "1"; //"TargetPromos";
+    public static final String COL_BESYBUYP = "1"; //"BestBuyPromos";
     
     public static final String TABLE_PROMO_DETAIL = "PromotionDetails";
-    //public static final String COL_PDIID = "item_id";
+    public static final String COL_PDIID = "PDitem_id";
     public static final String COL_IDETAIL = "ItemDetail";
     public static final String COL_ORIGPRICE = "OriginalPrice";
     public static final String COL_PROMOPRICE = "PromotionPrice";
@@ -46,15 +46,15 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     	    + " text not null)";
    
     private static final String CREATE_TABLE_STATUS = "create table " + TABLE_STATUS
-    	    + " (" + COL_IID + " integer, " + COL_TARGET + " integer, " 
-    		+ COL_BESYBUY + " integer)";
+    	    + " (" + COL_SIID + " text not null, " + COL_TARGET + " text not null, "
+    		+ COL_BESYBUY + " text not null)";
 
     private static final String CREATE_TABLE_PROMOS = "create table " + TABLE_PROMOS
-    	    + " (" + COL_IID + " integer, " + COL_TARGETP + " integer, " 
-    		+ COL_BESYBUYP + " integer)";
+    	    + " (" + COL_PDIID + " text not null, " + COL_TARGETP + " text not null, "
+    		+ COL_BESYBUYP + " text not null)";
     
     private static final String CREATE_TABLE_PROMO_DETAIL = "create table " + TABLE_PROMO_DETAIL
-    	    + " (" + COL_IID + " integer, " + COL_IDETAIL + "  text not null, " 
+    	    + " (" + COL_PDIID + " text not null, " + COL_IDETAIL + "  text not null, " 
     		+ COL_ORIGPRICE +  " text not null, " + COL_PROMOPRICE +" text not null )";
     
    // private static final String DB_SCHEMA = CREATE_TABLE_CONTACT;
@@ -65,12 +65,12 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
+		
 		db.execSQL(CREATE_TABLE_USER);
-		//db.execSQL(CREATE_TABLE_ITEM);
-		//db.execSQL(CREATE_TABLE_STATUS);
-		//db.execSQL(CREATE_TABLE_PROMOS);
-		//db.execSQL(CREATE_TABLE_PROMO_DETAIL);
+		db.execSQL(CREATE_TABLE_ITEM);
+	//	db.execSQL(CREATE_TABLE_STATUS);
+	//	db.execSQL(CREATE_TABLE_PROMOS);
+	//	db.execSQL(CREATE_TABLE_PROMO_DETAIL);
 		
 		seedData(db);
 	}
@@ -80,13 +80,23 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 		Log.w(DEBUG_TAG, "Upgrading database. Existing contents will be lost. ["
 	            + oldVersion + "]->[" + newVersion + "]");
 	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEM);
+	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS);
+	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROMOS);
+	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROMO_DETAIL);
 	    onCreate(db);
 		
 	}
 	
 	private void seedData(SQLiteDatabase db) {
-		db.execSQL("insert into " + TABLE_USER + "  (user_id, password) values ('Malcom Reynolds', 'malcomreynolds');");
-/*		db.execSQL("insert into Contact (name, email, title, phone, twitterId) values ('Zoe Washburne', 'zoe@serenity.com', 'First Mate', '612-555-5678', 'zoewashburne');");
+		db.execSQL("insert into " + TABLE_USER + "  (user_id, password) values ('Malcom', 'malcom');");
+		db.execSQL("insert into " + TABLE_USER + "  (user_id, password) values ('Dave', 'dave');");
+
+	//	db.execSQL("insert into " + TABLE_ITEM + "  (user_id, password) values ('Dave', 'dave');");
+		
+		
+		
+		/*		db.execSQL("insert into Contact (name, email, title, phone, twitterId) values ('Zoe Washburne', 'zoe@serenity.com', 'First Mate', '612-555-5678', 'zoewashburne');");
 		db.execSQL("insert into Contact (name, email, title, phone, twitterId) values ('Hoban Washburne', 'wash@serenity.com', 'Pilot', '612-555-9012', 'wash');");
 		db.execSQL("insert into Contact (name, email, title, phone, twitterId) values ('Jayne Cobb', 'jayne@serenity.com', 'Muscle', '612-555-3456', 'heroofcanton');");
 		db.execSQL("insert into Contact (name, email, title, phone, twitterId) values ('Kaylee Frye', 'kaylee@serenity.com', 'Engineer', '612-555-7890', 'kaylee');");
