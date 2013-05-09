@@ -46,15 +46,15 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     	    + " text not null)";
    
     private static final String CREATE_TABLE_STATUS = "create table " + TABLE_STATUS
-    	    + " (" + COL_SIID + " text not null, " + COL_TARGET + " text not null, "
+    	    + " (" + COL_SIID + " integer not null, " + COL_TARGET + " text not null, "
     		+ COL_BESYBUY + " text not null)";
 
     private static final String CREATE_TABLE_PROMOS = "create table " + TABLE_PROMOS
-    	    + " (" + COL_PDIID + " text not null, " + COL_TARGETP + " text not null, "
+    	    + " (" + COL_PIID + " integer not null, " + COL_TARGETP + " text not null, "
     		+ COL_BESYBUYP + " text not null)";
     
     private static final String CREATE_TABLE_PROMO_DETAIL = "create table " + TABLE_PROMO_DETAIL
-    	    + " (" + COL_PDIID + " text not null, " + COL_IDETAIL + "  text not null, " 
+    	    + " (" + COL_PDIID + " integer not null, " + COL_IDETAIL + "  text not null, " 
     		+ COL_ORIGPRICE +  " text not null, " + COL_PROMOPRICE +" text not null )";
     
    // private static final String DB_SCHEMA = CREATE_TABLE_CONTACT;
