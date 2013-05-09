@@ -217,4 +217,16 @@
 		<item name="Rose wine"/>
 		<item name="White wine"/>
 	</category>
+	<category name="Electronics">
+		<item name="32&quot; LCD TV"/>
+		<item name="61&quot; DLP TV"/>
+		<item name="100&quot; Full HD Passive 3D Projector"/>
+		<item name="Playstation 4 Game Console"/>
+		<item name="Wii Game Console"/>
+	</category>
+	<category name="Video Games">
+	    <item name="Assassin's Creed III: Liberation"/>
+		<item name="Call of Duty Black Ops 2"/>
+		<item name="Crysis 3"/>
+	</category>
 </categories>	
