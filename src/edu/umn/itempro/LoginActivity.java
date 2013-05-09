@@ -1,15 +1,17 @@
 package edu.umn.itempro;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import edu.umn.itempro.data.ItemProProvider;
 import edu.umn.itempro.data.ItemProDatabase;
+import edu.umn.itempro.data.ItemProProvider;
 
 /** A Class for Login screen
 *
@@ -20,6 +22,7 @@ public class LoginActivity extends Activity {
       EditText username, password;
       Button login;
       Button clear;
+      public static final SharedPreferences pref = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,11 @@ public class LoginActivity extends Activity {
     	    if (userCursor.moveToFirst()) {
     	    	passwordFromDataSource = userCursor.getString(0);
     	    }
-            
+    	    
+    	    //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            //SharedPreferences.Editor editor = pref.edit();
+            //editor.putString("user_id", usernameFromInput);
+    	    
             if(passwordFromInput != null && passwordFromInput.equals(passwordFromDataSource)){
                   Toast.makeText(getApplicationContext(), "Login Successfully !!!", Toast.LENGTH_LONG).show();
                   Intent intent = new Intent(getApplicationContext(), CheckinActivity.class);

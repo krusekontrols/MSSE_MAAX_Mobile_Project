@@ -1,6 +1,7 @@
 package edu.umn.itempro;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
@@ -33,6 +34,8 @@ public class CheckinActivity extends Activity {
     {
     	Toast msg = Toast.makeText(getBaseContext(), "You are connected to Best Buy", Toast.LENGTH_LONG);                                                                 
     	msg.show();
+    	Intent intent = new Intent(getApplicationContext(), ItemList.class);
+    	startActivity(intent);
     }                                
     });
 
@@ -42,6 +45,8 @@ public class CheckinActivity extends Activity {
     {
     	Toast msg = Toast.makeText(getBaseContext(), "You are connected to Target", Toast.LENGTH_LONG);
     	msg.show();
+    	Intent intent = new Intent(getApplicationContext(), ItemList.class);
+    	startActivity(intent); 
     }
     });
   }

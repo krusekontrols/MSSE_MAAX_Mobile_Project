@@ -1,10 +1,15 @@
 package edu.umn.itempro.data;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import android.content.ContentProvider;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -18,16 +23,25 @@ public class ItemProProvider extends ContentProvider {
 	
 	public static final int USER = 100;
 	public static final int ITEM = 110;
-	public static final int STATUS = 120;
-	public static final int PROMOS = 130;
-	public static final int PROMODETAIL = 140;
-	
+	public static final int ITEM_ID = 111;
+	public static final int CATEGORY = 120;
+    public static final int CATEGORY_ID = 121;
+	public static final int STATUS = 130;
+	public static final int PROMOS = 140;
+	public static final int PROMODETAIL = 150;
+   
 	
 	//public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ITEMPRO_BASE_PATH);
 	public static final String CONTENT_USER_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/" + ItemProDatabase.TABLE_USER ;
+	public static final String CONTENT_ITEMS_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE 
+			+ "/" + ItemProDatabase.TABLE_ITEM;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/" + ItemProDatabase.TABLE_ITEM;
+	public static final String CONTENT_CATEGORIES_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/" + ItemProDatabase.TABLE_CATEGORY;
+	public static final String CONTENT_CATEGORY_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/" + ItemProDatabase.TABLE_CATEGORY;
 	public static final String CONTENT_STATUS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/" + ItemProDatabase.TABLE_STATUS;
 	public static final String CONTENT_PROMOS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
@@ -40,11 +54,19 @@ public class ItemProProvider extends ContentProvider {
     static {
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_USER, USER);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_ITEM, ITEM);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_ITEM + "/#", ITEM_ID);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_CATEGORY, CATEGORY);
+        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_CATEGORY + "/#", CATEGORY_ID);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_STATUS, STATUS);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMOS, PROMOS);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMO_DETAIL, PROMODETAIL);
         
     }
+    
+    public static boolean isNew = false; 
+	public static NumberFormat format = new DecimalFormat("######.##");
+    public static final String ITEMS_TABLE_NAME = "items";
+    public static final String CATEGORIES_TABLE_NAME = "categories";
     
     public static final Uri getContentURI(String tableName) {
     	return Uri.parse("content://" + AUTHORITY + "/" + tableName);
@@ -57,8 +79,13 @@ public class ItemProProvider extends ContentProvider {
 	    case USER:
 	        return CONTENT_USER_TYPE;
 	    case ITEM:
+	    	return CONTENT_ITEMS_TYPE;
+	    case ITEM_ID:
 	        return CONTENT_ITEM_TYPE;
-	        
+	    case CATEGORY:
+	    	return CONTENT_CATEGORIES_TYPE;
+	    case CATEGORY_ID:
+	        return CONTENT_CATEGORY_TYPE;
 	    case STATUS:
 	        return CONTENT_STATUS_TYPE;
 	    case PROMOS:
@@ -69,19 +96,48 @@ public class ItemProProvider extends ContentProvider {
 	        return null;
 	    }
 	}
+	
+    public void close() {
+    	iDB.close();
+    }
+    
+    public void deleteAll(){
+    	SQLiteDatabase database = iDB.getReadableDatabase();
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_USER);
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_ITEM);
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_CATEGORY);
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_STATUS);
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_PROMOS);
+    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_PROMO_DETAIL);
+    	iDB.onCreate(database);
+    }
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 	        String[] selectionArgs, String sortOrder) {
 	    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+	    String orderBy = "";
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
 	    case USER:
 	    	queryBuilder.setTables(ItemProDatabase.TABLE_USER);
 	        break;
 	    case ITEM:
-	    	 queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
+	    	queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
+	    	orderBy = Item.NAME;
 	        break;
+	    case ITEM_ID:
+	    	queryBuilder.setTables(ItemProDatabase.TABLE_ITEM);
+	    	queryBuilder.appendWhere(Item._ID + "=" + uri.getPathSegments().get(1));
+            break;
+	    case CATEGORY:
+	    	queryBuilder.setTables(ItemProDatabase.TABLE_CATEGORY);
+            orderBy = Category.NAME;
+            break;
+        case CATEGORY_ID:
+            queryBuilder.setTables(ItemProDatabase.TABLE_CATEGORY);
+            queryBuilder.appendWhere(Category._ID + "=" + uri.getPathSegments().get(1));
+            break;
 	    case STATUS:
 	    	 queryBuilder.setTables(ItemProDatabase.TABLE_STATUS);
 	        break;
@@ -91,19 +147,56 @@ public class ItemProProvider extends ContentProvider {
 	    case PROMODETAIL:
 	    	 queryBuilder.setTables(ItemProDatabase.TABLE_PROMO_DETAIL);
 	        break;
+        
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
 	    Cursor cursor = queryBuilder.query(iDB.getReadableDatabase(),
-	            projection, selection, selectionArgs, null, null, sortOrder);
+	            projection, selection, selectionArgs, null, null, orderBy);
 	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
 	    return cursor;
 	}
 
 	@Override
-	public int delete(Uri arg0, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		int uriType = sURIMatcher.match(uri);
+        SQLiteDatabase sqlDB = iDB.getWritableDatabase();
+		int rowsAffected;
+        switch (uriType) {
+        case USER:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_USER , selection, selectionArgs);
+            break;
+        case ITEM:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_ITEM, selection, selectionArgs);
+            break;
+        case ITEM_ID:
+        	String itemId = uri.getPathSegments().get(1);
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_ITEM, Item._ID + "=" + itemId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        	break;
+        case CATEGORY:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_CATEGORY, selection, selectionArgs);
+            break;
+        case CATEGORY_ID:
+        	String categoryId = uri.getPathSegments().get(1);
+        	getContext().getContentResolver().delete(ItemProProvider.getContentURI(ItemProDatabase.TABLE_ITEM), Item.CATEGORY + "=" + categoryId, null);
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_CATEGORY, Category._ID + "=" + categoryId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        	//database.delete(ITEMS_TABLE_NAME, Items.CATEGORY + "=" + categoryId, whereArgs);
+        	break;
+        case STATUS:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_STATUS , selection, selectionArgs);
+        	break;
+        case PROMOS:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_PROMOS , selection, selectionArgs);
+        	break;
+        case PROMODETAIL:
+        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_PROMO_DETAIL , selection, selectionArgs);
+        	break;
+        default:
+            throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return rowsAffected;
 	}
 
 	
@@ -113,31 +206,38 @@ public class ItemProProvider extends ContentProvider {
 	        int uriType = sURIMatcher.match(uri);
 	        SQLiteDatabase sqlDB = iDB.getWritableDatabase();
 
-	        long rowsAffected;
+	        long rowID;
 
 	        switch (uriType) {
 	        case USER:
-	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_USER , null, values);
-	            
+	            rowID = sqlDB.insert(ItemProDatabase.TABLE_USER , null, values);
 	            break;
 	        case ITEM:
-	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_ITEM , null, values);
-	        	
-		            break;
-	                 
+	            rowID = sqlDB.insert(ItemProDatabase.TABLE_ITEM , null, values);
+	            if (rowID > 0) {
+	                Uri noteUri = ContentUris.withAppendedId(getContentURI(ItemProDatabase.TABLE_ITEM), rowID);
+	                getContext().getContentResolver().notifyChange(noteUri, null);
+	                return noteUri;
+	            }
+	            throw new SQLException("Failed to insert row into " + uri);
+		    
+	        case CATEGORY: 
+	        	rowID = sqlDB.insert(ItemProDatabase.TABLE_CATEGORY , null, values);
+	            if (rowID > 0) {
+	                Uri noteUri = ContentUris.withAppendedId(getContentURI(ItemProDatabase.TABLE_CATEGORY), rowID);
+	                getContext().getContentResolver().notifyChange(noteUri, null);
+	                return noteUri;
+	            }
+	            throw new SQLException("Failed to insert row into " + uri);
 	        case STATUS:
-	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_STATUS , null, values);
-	            
+	            rowID = sqlDB.insert(ItemProDatabase.TABLE_STATUS , null, values);
 	        	break;
 	        case PROMOS:
-	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_PROMOS , null, values);
-	            
+	            rowID = sqlDB.insert(ItemProDatabase.TABLE_PROMOS , null, values);
 	        	break;
 	        case PROMODETAIL:
-	            rowsAffected = sqlDB.insert(ItemProDatabase.TABLE_PROMO_DETAIL , null, values);
-	            
+	            rowID = sqlDB.insert(ItemProDatabase.TABLE_PROMO_DETAIL , null, values);
 	        	break;
-	                     
 	        default:
 	            throw new IllegalArgumentException("Unknown URI");
 	        }
@@ -180,6 +280,18 @@ public class ItemProProvider extends ContentProvider {
             rowsAffected = sqlDB.update(ItemProDatabase.TABLE_ITEM,
                     values, selection, selectionArgs);
             break;
+        
+        case ITEM_ID:
+        	String itemId = uri.getPathSegments().get(1);
+        	rowsAffected = sqlDB.update(ItemProDatabase.TABLE_ITEM, values, Item._ID + "=" + itemId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        	break;
+        case CATEGORY:
+        	rowsAffected = sqlDB.update(ItemProDatabase.TABLE_CATEGORY, values, selection, selectionArgs);
+            break;
+        case CATEGORY_ID:
+        	String categoryId = uri.getPathSegments().get(1);
+        	rowsAffected = sqlDB.update(ItemProDatabase.TABLE_CATEGORY, values, Category._ID + "=" + categoryId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+        	break;
                  
         case STATUS:
             rowsAffected = sqlDB.update(ItemProDatabase.TABLE_STATUS,
