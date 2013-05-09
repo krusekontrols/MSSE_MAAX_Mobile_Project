@@ -10,7 +10,7 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="clear">Clear</string>
-    <string name="checkinGreeting">Hello World, Check In!</string>
+    <string name="checkinGreeting">Hello! CheckIn to the store you want to shop!</string>
     <string name="create_item_title">Create item</string>
     <string name="edit_item_title">Edit item</string>
     <string name="maintenance_title">Database maintenance</string>
@@ -55,5 +55,4 @@
     <string name="performcheck_long_label">Ask before checking off item</string>
     <string name="confirm_edit_title">Edit List</string>
     <string name="confirm_edit_label">Your shopping list is empty please add some items first.</string>
-
 </resources>
