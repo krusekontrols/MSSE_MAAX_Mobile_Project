@@ -32,4 +32,18 @@ public class Item implements BaseColumns {
      * <P>Type: INTEGER</P>
      */
     public static final String ONLIST = "onlist";
+    
+    /**
+     * Promotion in BestBuy
+     * <P>Type: TEXT</P>
+     */
+    public static final String BESTBUYPROMOTION ="bestbuypromotion";
+    
+    
+    /**
+     * Promotion in Target
+     * <P>Type: TEXT</P>
+     */
+    public static final String TARGETPROMOTION ="targetpromotion";
+    
 }

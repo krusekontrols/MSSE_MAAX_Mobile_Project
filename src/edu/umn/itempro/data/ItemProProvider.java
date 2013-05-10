@@ -23,14 +23,10 @@ public class ItemProProvider extends ContentProvider {
 	
 	public static final int USER = 100;
 	public static final int ITEM = 110;
-	public static final int ITEM_ID = 111;
-	public static final int CATEGORY = 120;
-    public static final int CATEGORY_ID = 121;
-	public static final int STATUS = 130;
-	public static final int PROMOS = 140;
-	public static final int PROMODETAIL = 150;
-   
-	
+	public static final int ITEM_ID = 120;
+	public static final int CATEGORY = 130;
+    public static final int CATEGORY_ID = 140;
+
 	//public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ITEMPRO_BASE_PATH);
 	public static final String CONTENT_USER_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/" + ItemProDatabase.TABLE_USER ;
@@ -42,12 +38,6 @@ public class ItemProProvider extends ContentProvider {
 			+ "/" + ItemProDatabase.TABLE_CATEGORY;
 	public static final String CONTENT_CATEGORY_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 			+ "/" + ItemProDatabase.TABLE_CATEGORY;
-	public static final String CONTENT_STATUS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/" + ItemProDatabase.TABLE_STATUS;
-	public static final String CONTENT_PROMOS_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/" + ItemProDatabase.TABLE_PROMOS;
-	public static final String CONTENT_PROMODETAIL_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/" + ItemProDatabase.TABLE_PROMO_DETAIL;
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
@@ -57,9 +47,6 @@ public class ItemProProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_ITEM + "/#", ITEM_ID);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_CATEGORY, CATEGORY);
         sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_CATEGORY + "/#", CATEGORY_ID);
-        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_STATUS, STATUS);
-        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMOS, PROMOS);
-        sURIMatcher.addURI(AUTHORITY, ItemProDatabase.TABLE_PROMO_DETAIL, PROMODETAIL);
         
     }
     
@@ -86,12 +73,6 @@ public class ItemProProvider extends ContentProvider {
 	    	return CONTENT_CATEGORIES_TYPE;
 	    case CATEGORY_ID:
 	        return CONTENT_CATEGORY_TYPE;
-	    case STATUS:
-	        return CONTENT_STATUS_TYPE;
-	    case PROMOS:
-	        return CONTENT_PROMOS_TYPE;
-	    case PROMODETAIL:
-	        return CONTENT_PROMODETAIL_TYPE;
 	    default:
 	        return null;
 	    }
@@ -106,9 +87,6 @@ public class ItemProProvider extends ContentProvider {
     	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_USER);
     	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_ITEM);
     	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_CATEGORY);
-    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_STATUS);
-    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_PROMOS);
-    	database.execSQL("DROP TABLE IF EXISTS " + ItemProDatabase.TABLE_PROMO_DETAIL);
     	iDB.onCreate(database);
     }
 
@@ -138,15 +116,6 @@ public class ItemProProvider extends ContentProvider {
             queryBuilder.setTables(ItemProDatabase.TABLE_CATEGORY);
             queryBuilder.appendWhere(Category._ID + "=" + uri.getPathSegments().get(1));
             break;
-	    case STATUS:
-	    	 queryBuilder.setTables(ItemProDatabase.TABLE_STATUS);
-	        break;
-	    case PROMOS:
-	    	 queryBuilder.setTables(ItemProDatabase.TABLE_PROMOS);
-	        break;
-	    case PROMODETAIL:
-	    	 queryBuilder.setTables(ItemProDatabase.TABLE_PROMO_DETAIL);
-	        break;
         
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
@@ -181,15 +150,6 @@ public class ItemProProvider extends ContentProvider {
         	getContext().getContentResolver().delete(ItemProProvider.getContentURI(ItemProDatabase.TABLE_ITEM), Item.CATEGORY + "=" + categoryId, null);
         	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_CATEGORY, Category._ID + "=" + categoryId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         	//database.delete(ITEMS_TABLE_NAME, Items.CATEGORY + "=" + categoryId, whereArgs);
-        	break;
-        case STATUS:
-        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_STATUS , selection, selectionArgs);
-        	break;
-        case PROMOS:
-        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_PROMOS , selection, selectionArgs);
-        	break;
-        case PROMODETAIL:
-        	rowsAffected = sqlDB.delete(ItemProDatabase.TABLE_PROMO_DETAIL , selection, selectionArgs);
         	break;
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -229,15 +189,6 @@ public class ItemProProvider extends ContentProvider {
 	                return noteUri;
 	            }
 	            throw new SQLException("Failed to insert row into " + uri);
-	        case STATUS:
-	            rowID = sqlDB.insert(ItemProDatabase.TABLE_STATUS , null, values);
-	        	break;
-	        case PROMOS:
-	            rowID = sqlDB.insert(ItemProDatabase.TABLE_PROMOS , null, values);
-	        	break;
-	        case PROMODETAIL:
-	            rowID = sqlDB.insert(ItemProDatabase.TABLE_PROMO_DETAIL , null, values);
-	        	break;
 	        default:
 	            throw new IllegalArgumentException("Unknown URI");
 	        }
@@ -292,20 +243,6 @@ public class ItemProProvider extends ContentProvider {
         	String categoryId = uri.getPathSegments().get(1);
         	rowsAffected = sqlDB.update(ItemProDatabase.TABLE_CATEGORY, values, Category._ID + "=" + categoryId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
         	break;
-                 
-        case STATUS:
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_STATUS,
-                    values, selection, selectionArgs);
-            break;
-        case PROMOS:
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_PROMOS,
-                    values, selection, selectionArgs);
-            break;
-        case PROMODETAIL:
-            rowsAffected = sqlDB.update(ItemProDatabase.TABLE_PROMO_DETAIL,
-                    values, selection, selectionArgs);
-            break;
-                     
         default:
             throw new IllegalArgumentException("Unknown URI");
         }

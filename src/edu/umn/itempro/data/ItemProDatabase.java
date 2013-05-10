@@ -8,7 +8,7 @@ import android.util.Log;
 public class ItemProDatabase extends SQLiteOpenHelper {
 	
 	private static final String DEBUG_TAG = "ItemProDatabase";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
     
     private static final String DB_NAME = "itempro_data";
     
@@ -18,27 +18,7 @@ public class ItemProDatabase extends SQLiteOpenHelper {
     public static final String COL_PWD = "password";
     
     public static final String TABLE_ITEM = "Item";
-    public static final String COL_IID = "iid";
-    //public static final String COL_INAME = "item_name";
-    
-    
     public static final String TABLE_CATEGORY = "Category";
-    
-    public static final String TABLE_STATUS = "Status";
-    public static final String COL_SIID = "item_id";
-    public static final String COL_TARGET = "Target"; //"TargetStatus";
-    public static final String COL_BESYBUY ="BestBuy"; //"BestBuyStatus";
-    
-    public static final String TABLE_PROMOS = "Promotions";
-    public static final String COL_PIID = "item_id";
-    public static final String COL_TARGETP = "Target"; //"TargetPromos";
-    public static final String COL_BESYBUYP = "BestBuy"; //"BestBuyPromos";
-    
-    public static final String TABLE_PROMO_DETAIL = "PromotionDetails";
-    public static final String COL_PDIID = "item_id";
-    public static final String COL_IDETAIL = "ItemDetail";
-    public static final String COL_ORIGPRICE = "OriginalPrice";
-    public static final String COL_PROMOPRICE = "PromotionPrice";
     
     
     private static final String CREATE_TABLE_USER = "create table " + TABLE_USER
@@ -50,26 +30,16 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 	+ Item.AMOUNT + " FLOAT,"
 	+ Item.UNIT + " TEXT,"
 	+ Item.ONLIST + " INTEGER,"
-	+ Item.CATEGORY + " INTEGER"
+	+ Item.CATEGORY + " INTEGER,"
+	+ Item.BESTBUYPROMOTION + " TEXT,"
+	+ Item.TARGETPROMOTION + " TEXT"
 	+");";
     
     private static final String CREATE_TABLE_CATEGORY = "CREATE TABLE " + TABLE_CATEGORY + " ("
     + Category._ID + " INTEGER PRIMARY KEY,"
     + Category.NAME + " TEXT"
     +");";
-    
-    private static final String CREATE_TABLE_STATUS = "create table " + TABLE_STATUS
-    	    + " (" + COL_SIID + " integer not null, " + COL_TARGET + " text not null, "
-    		+ COL_BESYBUY + " text not null)";
-
-    private static final String CREATE_TABLE_PROMOS = "create table " + TABLE_PROMOS
-    	    + " (" + COL_PIID + " integer not null, " + COL_TARGETP + " text not null, "
-    		+ COL_BESYBUYP + " text not null)";
-    
-    private static final String CREATE_TABLE_PROMO_DETAIL = "create table " + TABLE_PROMO_DETAIL
-    	    + " (" + COL_PDIID + " integer not null, " + COL_IDETAIL + "  text not null, " 
-    		+ COL_ORIGPRICE +  " text not null, " + COL_PROMOPRICE +" text not null )";
-    
+   
    
    // private static final String DB_SCHEMA = CREATE_TABLE_CONTACT;
     
@@ -83,9 +53,7 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_USER);
 		db.execSQL(CREATE_TABLE_ITEM);
 		db.execSQL(CREATE_TABLE_CATEGORY);
-		db.execSQL(CREATE_TABLE_STATUS);
-		db.execSQL(CREATE_TABLE_PROMOS);
-		db.execSQL(CREATE_TABLE_PROMO_DETAIL);
+	
 		
 		seedData(db);
 	}
@@ -97,9 +65,6 @@ public class ItemProDatabase extends SQLiteOpenHelper {
 	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
 	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEM);
 	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
-	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS);
-	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROMOS);
-	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROMO_DETAIL);
 	    onCreate(db);
 	}
 	

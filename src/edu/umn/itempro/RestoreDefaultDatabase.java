@@ -1,18 +1,23 @@
 package edu.umn.itempro;
 
-import edu.umn.itempro.data.Category;
-import edu.umn.itempro.data.Item;
-import edu.umn.itempro.data.ItemProDatabase;
-import edu.umn.itempro.data.ItemProProvider;
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.os.Bundle;
+import edu.umn.itempro.data.Category;
+import edu.umn.itempro.data.Item;
+import edu.umn.itempro.data.ItemProDatabase;
+import edu.umn.itempro.data.ItemProProvider;
 
 public class RestoreDefaultDatabase extends Activity{
 
 	public static final String RESTORE_DEFAULT = "edu.umn.itempro.action.RESTORE_DEFAULT";
+	public static final String[] PROMOTION_CODE = {"Not in Stock", "No Promotion Avaiable", "Buy 2 Get 1 free", "Buy 1 Get 1 at Half Price", "Buy 1 Get 1 Free",
+		"Buy 1 Get 2 Free", "5% Off", "10% Off", "15% Off", "20% Off", "25% Off", "30% Off", "35% Off", "40% Off", "45% Off", "50% Off", "55% Off", "60% Off", 
+		"65% Off", "70% Off", "75% Off"};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,6 +32,7 @@ public class RestoreDefaultDatabase extends Activity{
 				XmlResourceParser xmlParser = getResources().getXml(R.xml.defaultshoppinglist);
 				int eventType;
 				long categoryID = -1;
+				String categoryName = null;
 				try {
 					eventType = xmlParser.getEventType();
 					while (eventType != XmlResourceParser.END_DOCUMENT){
@@ -36,7 +42,7 @@ public class RestoreDefaultDatabase extends Activity{
 
 								for (int i = 0; i < xmlParser.getAttributeCount(); i++){
 									if (xmlParser.getAttributeName(i).equals("name")){
-										String categoryName = xmlParser.getAttributeValue(i);
+										categoryName = xmlParser.getAttributeValue(i);
 										ContentValues values = new ContentValues();
 										values.put(Category.NAME, categoryName);
 										getContentResolver().insert(ItemProProvider.getContentURI(ItemProDatabase.TABLE_CATEGORY), values);
@@ -54,6 +60,17 @@ public class RestoreDefaultDatabase extends Activity{
 										ContentValues values = new ContentValues();
 										values.put(Item.NAME, itemName);
 										values.put(Item.CATEGORY, categoryID);
+										Random rand =new Random();
+										Random rand1 = new Random();
+										if(!"Electronics".equalsIgnoreCase(categoryName) && !"Video Games".equalsIgnoreCase(categoryName))
+										{
+											values.put(Item.BESTBUYPROMOTION, PROMOTION_CODE[0]);
+										}
+										else
+										{
+											values.put(Item.BESTBUYPROMOTION, PROMOTION_CODE[rand.nextInt(20) + 1]);
+										}
+										values.put(Item.TARGETPROMOTION, PROMOTION_CODE[rand1.nextInt(21)]);
 										getContentResolver().insert(ItemProProvider.getContentURI(ItemProDatabase.TABLE_ITEM), values);
 										break;
 									}

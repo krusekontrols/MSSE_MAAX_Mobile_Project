@@ -48,7 +48,7 @@ public class ItemList extends ListActivity {
 	private static final int REQUEST_SET_EDIT_MODE = 1;
 	private static final String MODE = "mode";
 	private static final String CATEGORY = "category";
-	private static final int SHOPPING_MODE = 1;
+	public static final int SHOPPING_MODE = 1;
 	private static final long ALL_CATEGORIES = -1;
 	private static final String PREFERENCE_STARTED = "PREFERENCE_STARTED";
 	private Cursor itemsCursor;
@@ -58,6 +58,7 @@ public class ItemList extends ListActivity {
 	private Spinner spinner;
 	private long categoryID = ALL_CATEGORIES;
 	private List<Long> categoryIDs = new ArrayList<Long>();
+	
 
 	/** Called when the activity is first created. */
 	@Override
@@ -151,8 +152,6 @@ public class ItemList extends ListActivity {
 		}
 			
 	}
-	
-
 	
 	private class CategoryContentObserver extends ContentObserver {
     	public CategoryContentObserver(Handler h) {
@@ -251,12 +250,12 @@ public class ItemList extends ListActivity {
 		switch (mode) {
 		case EDIT_MODE:
 			setTitle(getString(R.string.app_name) + " - "
-					+ getString(R.string.edit_mode_label));
+					+ getString(R.string.edit_mode_label) + "             Checked In: " + getStore());
 			searchPanel.setVisibility(View.VISIBLE);
 			break;
 		case SHOPPING_MODE:
 			setTitle(getString(R.string.app_name) + " - "
-					+ getString(R.string.shopping_mode_label));
+					+ getString(R.string.shopping_mode_label) + "             Checked In: " + getStore());
 			searchPanel.setVisibility(View.GONE);
 			break;
 		}
@@ -437,5 +436,16 @@ public class ItemList extends ListActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putInt(MODE, mode);
 		outState.putLong(CATEGORY, categoryID);
+	}
+	
+	public String getStore()
+	{
+		SharedPreferences preferences = getSharedPreferences(CheckinActivity.class.getName(), Context.MODE_PRIVATE);
+		return preferences.getString(CheckinActivity.CHECKED_IN_STORE, "");
+	}
+	
+	public int getMode()
+	{
+		return mode;
 	}
 }
