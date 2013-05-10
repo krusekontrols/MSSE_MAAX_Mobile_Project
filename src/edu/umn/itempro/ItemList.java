@@ -30,7 +30,6 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 import edu.umn.itempro.data.Category;
 import edu.umn.itempro.data.Item;
 import edu.umn.itempro.data.ItemProDatabase;

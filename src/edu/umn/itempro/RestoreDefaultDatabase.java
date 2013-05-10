@@ -68,9 +68,12 @@ public class RestoreDefaultDatabase extends Activity{
 										}
 										else
 										{
-											values.put(Item.BESTBUYPROMOTION, PROMOTION_CODE[rand.nextInt(20) + 1]);
+											if(itemName.startsWith("a") || itemName.startsWith("A")) values.put(Item.BESTBUYPROMOTION, PROMOTION_CODE[1]);
+											else values.put(Item.BESTBUYPROMOTION, PROMOTION_CODE[rand.nextInt(20) + 1]);
 										}
-										values.put(Item.TARGETPROMOTION, PROMOTION_CODE[rand1.nextInt(21)]);
+										
+										if(itemName.startsWith("m") || itemName.startsWith("M")) values.put(Item.TARGETPROMOTION, PROMOTION_CODE[1]);
+										else values.put(Item.TARGETPROMOTION, PROMOTION_CODE[rand1.nextInt(21)]);
 										getContentResolver().insert(ItemProProvider.getContentURI(ItemProDatabase.TABLE_ITEM), values);
 										break;
 									}
